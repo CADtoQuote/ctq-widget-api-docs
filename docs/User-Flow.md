@@ -1,4 +1,4 @@
-# User Flow
+# User-Flow
 
 ## Screen 1 - Upload files
 
