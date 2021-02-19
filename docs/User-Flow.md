@@ -6,6 +6,9 @@
 ```
 POST /get-signed-urls
 ```
+[POST /get-signed-urls](../reference/ctq-widget-api.v1.yaml/paths/~1get-signed-urls/get)
+
+
 ![screen1](../assets/images/screen1.png)
 
 ## Screen 2 - Configuration
