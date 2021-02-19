@@ -1,0 +1,816 @@
+swagger: '2.0'
+info:
+  title: CTQ Widget API
+  version: '1.0'
+host: example.com
+schemes:
+  - http
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: Orders
+  - name: Models
+  - name: Info
+  - name: Settings
+paths:
+  /get-signed-urls:
+    post:
+      tags:
+        - Models
+      operationId: post-get-signed-urls
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: array
+            minItems: 1
+            items:
+              type: string
+          description: An array of filenames. Only STL objects are supported for now.
+          x-examples:
+            example-1:
+              - car.stl
+              - duck.stl
+        - type: string
+          in: query
+          name: order_id
+        - type: string
+          in: header
+          name: language
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              order_id:
+                type: string
+              items:
+                type: array
+                uniqueItems: true
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    model:
+                      type: object
+                      required:
+                        - filename
+                        - signed_url
+                        - url
+                        - units
+                      properties:
+                        filename:
+                          type: string
+                          example: model.stl
+                        signed_url:
+                          type: string
+                          description: Signed URL used for model upload
+                          format: uri
+                        url:
+                          type: string
+                          description: URL used for retrieving uploaded model
+                          format: uri
+                        units:
+                          type: string
+                          enum:
+                            - mm
+                            - inches
+                          description: Millimeters and inches are supported
+                    quantity:
+                      type: integer
+                      minimum: 1
+                    price_inc_vat:
+                      type: number
+                      minimum: 0
+                      description: Including VAT
+                    price_exc_vat:
+                      type: number
+                      minimum: 0
+                      description: Excluding VAT
+                    additional_cost:
+                      type: number
+                      minimum: 0
+                      description: ''
+                    print_time:
+                      type: number
+                      minimum: 0
+                  required:
+                    - id
+                    - model
+                    - quantity
+                    - price_inc_vat
+                    - price_exc_vat
+                    - additional_cost
+                    - print_time
+            required:
+              - order_id
+              - items
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/invalid_body_error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      summary: Get signed URLs
+      description: |-
+        Generates signed URLs for uploading models to Cloud Storage. 
+
+        If query parameter order ID is specified, new items, one for each model, will be created and added to the order.
+        If order ID isn't specified, the new order with items will be created.
+
+        Generated signed URL returned in response can be used in subsequent PUT requests to upload the data. The URL has expiration time of one hour. Models will be uploaded in folder named [ORDER_ID].
+    parameters: []
+  '/orders/{order_id}':
+    get:
+      summary: Get order
+      tags:
+        - Orders
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/order'
+          examples: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      operationId: get-order-order_id
+      parameters:
+        - type: string
+          in: header
+          name: language
+      description: Returns order with specified ID.
+    parameters:
+      - type: string
+        name: order_id
+        in: path
+        required: true
+    patch:
+      summary: Update order
+      operationId: patch-orders-order_id
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            description: ''
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/definitions/item'
+              subtotal_exc_vat:
+                type: number
+                minimum: 0
+              subtotal_inc_vat:
+                type: number
+                minimum: 0
+              lead_time:
+                type: number
+                minimum: 0
+                description: In days
+              min_order_surcharge:
+                type: number
+                minimum: 0
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/invalid_body_error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    process_id:
+                      type: string
+                    material_id:
+                      type: string
+                    quality_id:
+                      type: string
+                    color_id:
+                      type: string
+                    postproduction_id:
+                      type: string
+                    quantity:
+                      type: integer
+                      minimum: 1
+                    model:
+                      type: object
+                      properties:
+                        units:
+                          type: string
+                          enum:
+                            - mm
+                            - inches
+                  required:
+                    - id
+            required:
+              - items
+        - type: string
+          in: header
+          name: language
+      description: Updates order with specified ID. Response object includes only updated items from the order.
+      tags:
+        - Orders
+    delete:
+      summary: Delete order
+      operationId: delete-orders-order_id
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      parameters:
+        - type: string
+          in: query
+          name: item_id
+        - type: string
+          in: header
+          name: language
+      description: Deletes order or item if query parameter item ID is specified.
+      tags:
+        - Orders
+  /info:
+    get:
+      summary: Get info
+      tags:
+        - Info
+      responses:
+        '200':
+          description: OK
+          schema:
+            description: ''
+            type: object
+            properties:
+              vat:
+                type: number
+              shipping_options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    max:
+                      type: number
+                      minimum: 1
+                    name:
+                      type: string
+                      example: Fast Delivery
+                    units:
+                      type: string
+                      enum:
+                        - Business Days
+                        - Days
+                    price:
+                      type: number
+                      minimum: 0
+                      description: Excluding VAT
+                    id:
+                      type: string
+                    min:
+                      type: number
+                      minimum: 1
+                    description:
+                      type: string
+                  required:
+                    - max
+                    - name
+                    - units
+                    - price
+                    - id
+                    - min
+                    - description
+              supported_languages:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: en
+                    name:
+                      type: string
+                      example: English
+                  required:
+                    - code
+                    - name
+              min_order_value:
+                type: number
+                minimum: 0
+              currency:
+                type: object
+                required:
+                  - name
+                  - code
+                  - symbol
+                properties:
+                  name:
+                    type: string
+                  code:
+                    type: string
+                  symbol:
+                    type: string
+              settings:
+                type: array
+                items:
+                  $ref: '#/definitions/process'
+              supported_units:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                    - code
+                    - name
+              default_settings:
+                type: object
+                required:
+                  - process_id
+                  - material_id
+                  - quality_id
+                properties:
+                  process_id:
+                    type: string
+                  material_id:
+                    type: string
+                  quality_id:
+                    type: string
+              supported_countries:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                    - id
+                    - name
+              default_language:
+                type: string
+            required:
+              - vat
+              - shipping_options
+              - supported_languages
+              - min_order_value
+              - currency
+              - settings
+              - supported_units
+              - default_settings
+              - supported_countries
+              - default_language
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      operationId: get-info
+      description: Returns info data and print settings.
+      parameters:
+        - type: string
+          in: header
+          name: language
+    parameters: []
+  '/orders/{order_id}/apply-discount/{code}':
+    parameters:
+      - type: string
+        name: order_id
+        in: path
+        required: true
+      - type: string
+        name: code
+        in: path
+        required: true
+    post:
+      summary: Apply discount
+      operationId: post-orders-order_id-apply-discount-code
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              total_discount:
+                type: number
+                minimum: 0
+              subtotal_inc_vat:
+                type: number
+                minimum: 0
+              subtotal_exc_vat:
+                type: number
+                minimum: 0
+              min_order_surcharge:
+                type: number
+            required:
+              - total_discount
+              - subtotal_inc_vat
+              - subtotal_exc_vat
+              - min_order_surcharge
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      tags:
+        - Orders
+      parameters:
+        - type: string
+          in: header
+          name: language
+  '/orders/{order_id}/place-order':
+    parameters:
+      - type: string
+        name: order_id
+        in: path
+        required: true
+    post:
+      summary: Place order
+      operationId: post-orders-order_id-place-order
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              order_number:
+                type: string
+            required:
+              - order_number
+          examples: {}
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/invalid_body_error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      description: Place an order with specified ID.
+      tags:
+        - Orders
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              full_name:
+                type: string
+              company:
+                type: string
+              vat_number:
+                type: string
+              country_id:
+                type: string
+              postal_code:
+                type: string
+              city:
+                type: string
+              street_address:
+                type: string
+              phone:
+                type: string
+              email:
+                type: string
+              shipping_option:
+                type: string
+              discount_code:
+                type: string
+              special_requests:
+                type: string
+            required:
+              - full_name
+              - country_id
+              - postal_code
+              - city
+              - street_address
+              - email
+              - shipping_option
+          description: ''
+        - type: string
+          in: header
+          name: language
+definitions:
+  order:
+    title: Order
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/item'
+      subtotal_exc_vat:
+        type: number
+        minimum: 0
+      subtotal_inc_vat:
+        type: number
+        minimum: 0
+      lead_time:
+        type: number
+        minimum: 0
+        description: In days
+      status:
+        type: string
+        enum:
+          - active
+          - completed
+          - pending
+      min_order_surcharge:
+        type: number
+        minimum: 0
+    required:
+      - subtotal_exc_vat
+      - subtotal_inc_vat
+      - lead_time
+      - status
+    x-tags:
+      - Responses
+  item:
+    title: Item
+    type: object
+    properties:
+      id:
+        type: string
+      model:
+        $ref: '#/definitions/model'
+      process_id:
+        type: string
+      material_id:
+        type: string
+      quality_id:
+        type: string
+      color_id:
+        type: string
+      postproduction_id:
+        type: string
+      price_inc_vat:
+        type: number
+        minimum: 0
+        description: Including VAT
+      price_exc_vat:
+        type: number
+        minimum: 0
+        description: Excluding VAT
+      quantity:
+        type: integer
+        minimum: 1
+      additional_cost:
+        type: number
+        minimum: 0
+      print_time:
+        type: number
+        minimum: 0
+      material_cost_difference:
+        type: array
+        items:
+          type: object
+          properties:
+            material_id:
+              type: string
+            value:
+              type: number
+          required:
+            - material_id
+            - value
+    required:
+      - id
+      - model
+      - price_inc_vat
+      - price_exc_vat
+      - quantity
+      - additional_cost
+      - print_time
+    x-tags:
+      - Responses
+  model:
+    title: Model
+    type: object
+    properties:
+      filename:
+        type: string
+      url:
+        type: string
+        format: uri
+      units:
+        type: string
+        enum:
+          - mm
+          - inches
+        description: Millimeters and inches are supported
+      size:
+        type: object
+        description: length x width x height
+        properties:
+          length:
+            type: number
+            minimum: 0
+          width:
+            type: number
+            minimum: 0
+          height:
+            type: number
+            minimum: 0
+    required:
+      - filename
+      - url
+      - units
+    x-tags:
+      - Responses
+  process:
+    title: Process
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      pic_url:
+        type: string
+        format: uri
+      materials:
+        type: array
+        items:
+          $ref: '#/definitions/material'
+      qualities:
+        type: array
+        items:
+          $ref: '#/definitions/quality'
+      colors:
+        type: array
+        items:
+          $ref: '#/definitions/color'
+      postproductions:
+        type: array
+        items:
+          $ref: '#/definitions/postproduction'
+    required:
+      - id
+      - name
+      - description
+      - pic_url
+      - materials
+      - qualities
+      - colors
+      - postproductions
+    x-tags:
+      - Responses
+  material:
+    title: Material
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      pic_url:
+        type: string
+        format: uri
+    required:
+      - id
+      - name
+      - description
+      - pic_url
+    x-tags:
+      - Responses
+  quality:
+    title: Quality
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+    required:
+      - id
+      - name
+      - description
+    x-tags:
+      - Responses
+  color:
+    title: Color
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      hex_value:
+        type: string
+    x-tags:
+      - Responses
+  postproduction:
+    title: Postproduction
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      pic_url:
+        type: string
+        format: uri
+    required:
+      - id
+      - name
+      - description
+      - pic_url
+    x-tags:
+      - Responses
+  error:
+    description: ''
+    type: object
+    title: Error
+    x-tags:
+      - Responses
+    x-examples: {}
+    properties:
+      error:
+        type: string
+        minLength: 1
+    required:
+      - error
+  invalid_body_error:
+    title: Invalid request body error
+    type: object
+    description: ''
+    x-examples:
+      example-1:
+        errors:
+          - x-api-key: Header parameter API Key isn't specified
+          - full_name: Invalid value
+    properties:
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            property:
+              type: string
+    x-tags:
+      - Responses
+securityDefinitions:
+  Organization ID:
+    name: x-api-key
+    type: apiKey
+    in: header
+security:
+  - Organization ID: []
