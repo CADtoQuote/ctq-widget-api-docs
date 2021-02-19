@@ -3,13 +3,13 @@
 ## Screen 1 - Upload files
 
 ### Upload files (new order)
-![screen1](../assets/images/screen1.png)
+![screen1](screens/screen1.png)
 
 [POST /get-signed-urls](../reference/ctq-widget-api.v1.yaml/paths/~1get-signed-urls/post)
 
 ## Screen 2 - Configuration
 
-![screen2-1](../assets/images/screen2-1.png)
+![screen2-1](screens/screen2-1.png)
 
 ### Get settings and info
 
@@ -60,7 +60,7 @@ Every change in configuration is done by sending PATCH request.
 
 ## Screen 2 - Add 3D model
 
-![screen2-2](../assets/images/screen2-2.png)
+![screen2-2](screens/screen2-2.png)
 
 ### Upload files (add to existing order)
 
@@ -69,7 +69,7 @@ Every change in configuration is done by sending PATCH request.
 
 ## Screen 3
 
-![screen3](../assets/images/screen3.png)
+![screen3](screens/screen3.png)
 
 ### Apply discount
 
