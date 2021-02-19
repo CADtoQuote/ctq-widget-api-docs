@@ -3,13 +3,13 @@
 ## Screen 1 - Upload files
 
 ### Upload files (new order)
-![screen1](../screens/screen1.png)
+![screen1](./screens/screen1.png)
 
 [POST /get-signed-urls](../reference/ctq-widget-api.v1.yaml/paths/~1get-signed-urls/post)
 
 ## Screen 2 - Configuration
 
-![screen2-1](../screens/screen2-1.png)
+![screen2-1](./screens/screen2-1.png)
 
 ### Get settings and info
 
