@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: CTQ Widget API
   version: '1.0'
-  description: 'User Flow: https://docs.google.com/document/d/1gzRMvQM5XIhRnb5K85Q3CvO8MPnjB-7GvaF8pZeXNU0/'
+  description: ''
 host: example.com
 schemes:
   - http
