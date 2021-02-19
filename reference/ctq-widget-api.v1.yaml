@@ -79,7 +79,7 @@ paths:
                           type: string
                           enum:
                             - mm
-                            - inches
+                            - in
                           description: Millimeters and inches are supported
                     quantity:
                       type: integer
@@ -233,7 +233,7 @@ paths:
                           type: string
                           enum:
                             - mm
-                            - inches
+                            - in
                   required:
                     - id
             required:
@@ -390,6 +390,11 @@ paths:
                     - name
               default_language:
                 type: string
+              default_units:
+                type: string
+                enum:
+                  - mm
+                  - in
             required:
               - vat
               - shipping_options
@@ -401,6 +406,7 @@ paths:
               - default_settings
               - supported_countries
               - default_language
+              - default_units
         '404':
           description: Not Found
           schema:
@@ -647,7 +653,7 @@ definitions:
         type: string
         enum:
           - mm
-          - inches
+          - in
         description: Millimeters and inches are supported
       size:
         type: object
