@@ -60,7 +60,7 @@ Every change in configuration is done by sending PATCH request.
 
 ## Screen 2 - Add 3D model
 
-![screen2-2](screens/screen2-2.png)
+![screen2-2](./screens/screen2-2.png)
 
 ### Upload files (add to existing order)
 
@@ -69,7 +69,7 @@ Every change in configuration is done by sending PATCH request.
 
 ## Screen 3
 
-![screen3](screens/screen3.png)
+![screen3](./screens/screen3.png)
 
 ### Apply discount
 
