@@ -3,9 +3,9 @@ info:
   title: CTQ Widget API
   version: '1.0'
   description: ''
-host: example.com
+host: widget.api.cadtoquote.com
 schemes:
-  - http
+  - https
 produces:
   - application/json
 consumes:
@@ -154,6 +154,11 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            type: object
+            properties: {}
         '500':
           description: Internal Server Error
           schema:
@@ -851,3 +856,4 @@ securityDefinitions:
     in: header
 security:
   - Organization ID: []
+basePath: /api/v1
