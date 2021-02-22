@@ -31,7 +31,7 @@ paths:
               type: string
           description: An array of filenames. Only STL objects are supported for now.
           x-examples:
-            example-1:
+            Example:
               - car.stl
               - duck.stl
         - type: string
@@ -96,9 +96,6 @@ paths:
                       type: number
                       minimum: 0
                       description: ''
-                    print_time:
-                      type: number
-                      minimum: 0
                   required:
                     - id
                     - model
@@ -106,7 +103,6 @@ paths:
                     - price_inc_vat
                     - price_exc_vat
                     - additional_cost
-                    - print_time
             required:
               - order_id
               - items
@@ -114,10 +110,22 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/error'
+          examples:
+            Order doesn't exist:
+              error: Order with the specified ID not found
         '422':
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/invalid_body_error'
+          examples:
+            All errors that can occur:
+              errors:
+                - x-api-key: Parameter is missing
+                - x-api-key: Organization with the specified ID not found
+                - language: Parameter is missing
+                - language: Language isn't supported
+                - body: Invalid value
+                - order_id: Invalid value
         '500':
           description: Internal Server Error
           schema:
@@ -241,7 +249,14 @@ paths:
         - type: string
           in: header
           name: language
-      description: Updates order with specified ID. Response object includes only updated items from the order.
+      description: |-
+        Updates order with specified ID. 
+
+        - Response object includes only updated items from the order. 
+
+        - All costs and prices in the response object are calculated on the server side.
+        - Item price is calculated based on selected process, material and quality.
+        - Additional cost of an item is calculated based on selected postproduction. 
       tags:
         - Orders
     delete:
@@ -615,9 +630,6 @@ definitions:
       additional_cost:
         type: number
         minimum: 0
-      print_time:
-        type: number
-        minimum: 0
       material_cost_difference:
         type: array
         items:
@@ -637,12 +649,13 @@ definitions:
       - price_exc_vat
       - quantity
       - additional_cost
-      - print_time
     x-tags:
       - Responses
   model:
     title: Model
     type: object
+    x-tags:
+      - Responses
     properties:
       filename:
         type: string
@@ -668,12 +681,18 @@ definitions:
           height:
             type: number
             minimum: 0
+      thumbnail_large:
+        type: string
+        format: uri
+      thumbnail_small:
+        type: string
+        format: uri
     required:
       - filename
       - url
       - units
-    x-tags:
-      - Responses
+      - thumbnail_large
+      - thumbnail_small
   process:
     title: Process
     type: object
