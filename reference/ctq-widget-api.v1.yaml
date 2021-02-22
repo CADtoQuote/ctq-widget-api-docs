@@ -154,6 +154,11 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            type: object
+            properties: {}
         '500':
           description: Internal Server Error
           schema:
