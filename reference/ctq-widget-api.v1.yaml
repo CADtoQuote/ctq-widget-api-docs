@@ -3,9 +3,9 @@ info:
   title: CTQ Widget API
   version: '1.0'
   description: ''
-host: example.com
+host: widget.api.cadtoquote.com
 schemes:
-  - http
+  - https
 produces:
   - application/json
 consumes:
@@ -856,3 +856,4 @@ securityDefinitions:
     in: header
 security:
   - Organization ID: []
+basePath: /api/v1
