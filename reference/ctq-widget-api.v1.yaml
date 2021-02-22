@@ -426,6 +426,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/error'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/invalid_body_error'
+          examples:
+            All errors that can occur:
+              errors:
+                - x-api-key: Parameter is missing
+                - x-api-key: Organization with the specified ID not found
+                - language: Parameter is missing
+                - language: Language isn't supported
         '500':
           description: Internal Server Error
           schema:
