@@ -201,6 +201,7 @@ paths:
               min_order_surcharge:
                 type: number
                 minimum: 0
+          examples: {}
         '404':
           description: Not Found
           schema:
@@ -213,6 +214,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/error'
+          examples:
+            Info has been changed:
+              error: Info has been changed
       parameters:
         - in: body
           name: body
