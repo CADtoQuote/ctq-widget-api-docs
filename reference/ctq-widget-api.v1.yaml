@@ -120,8 +120,8 @@ paths:
           examples:
             All errors that can occur:
               errors:
-                - x-api-key: Parameter is missing
-                - x-api-key: Organization with the specified ID not found
+                - organization_id: Parameter is missing
+                - organization_id: Organization with the specified ID not found
                 - language: Parameter is missing
                 - language: Language isn't supported
                 - body: Invalid value
@@ -442,8 +442,8 @@ paths:
           examples:
             All errors that can occur:
               errors:
-                - x-api-key: Parameter is missing
-                - x-api-key: Organization with the specified ID not found
+                - organization_id: Parameter is missing
+                - organization_id: Organization with the specified ID not found
                 - language: Parameter is missing
                 - language: Language isn't supported
         '500':
@@ -841,7 +841,7 @@ definitions:
     x-examples:
       example-1:
         errors:
-          - x-api-key: Header parameter API Key isn't specified
+          - organization_id: Header parameter API Key isn't specified
           - full_name: Invalid value
     properties:
       errors:
