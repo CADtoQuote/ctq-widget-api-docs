@@ -855,7 +855,7 @@ definitions:
       - Responses
 securityDefinitions:
   Organization ID:
-    name: x-api-key
+    name: organization_id
     type: apiKey
     in: header
 security:
