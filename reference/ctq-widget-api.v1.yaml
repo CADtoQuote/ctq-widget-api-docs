@@ -137,7 +137,9 @@ paths:
         If query parameter order ID is specified, new items, one for each model, will be created and added to the order.
         If order ID isn't specified, the new order with items will be created.
 
-        Generated signed URL returned in response can be used in subsequent PUT requests to upload the data. The URL has expiration time of one hour. Models will be uploaded in folder named [ORDER_ID].
+        Generated `signed_url` returned in response can be used in subsequent PUT requests to upload the data. The URL has expiration time of one hour.
+
+        After the model has been successfully uploaded, `url` can be used for downloading model. The URL has expiration time of five days.
     parameters: []
   '/orders/{order_id}':
     get:
