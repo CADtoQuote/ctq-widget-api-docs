@@ -139,7 +139,7 @@ paths:
 
         Generated `signed_url` returned in response can be used in subsequent PUT requests to upload the data. The URL has expiration time of one hour.
 
-        After the model has been successfully uploaded, `url` can be used for downloading model. The URL has expiration time of five days.
+        After the model has been successfully uploaded, `url` can be used in GET request for downloading model. The URL has expiration time of five days.
 
         **Content-Type** header has to be set to `application/octet-stream` in both requests (for uploading and downloading models).
     parameters: []
