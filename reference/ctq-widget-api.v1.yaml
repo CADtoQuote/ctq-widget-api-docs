@@ -319,7 +319,7 @@ paths:
             properties:
               vat:
                 type: number
-              shipping_options:
+              shipping_options (delivery):
                 type: array
                 items:
                   type: object
@@ -347,7 +347,6 @@ paths:
                       type: string
                       enum:
                         - delivery
-                        - pickup
                     shipping_zone:
                       type: string
                       enum:
@@ -364,7 +363,6 @@ paths:
                     - price
                     - id
                     - min
-                    - price
                     - type
                     - shipping_zone
                     - min_fs_value
@@ -459,9 +457,36 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/postproduction'
+              shipping_options (pickup):
+                type: array
+                items:
+                  type: object
+                  properties:
+                    shipping_zone:
+                      type: string
+                    type:
+                      type: string
+                      enum:
+                        - pickup
+                    price:
+                      type: number
+                      enum:
+                        - 0
+                    location:
+                      type: string
+                    name:
+                      type: string
+                    id:
+                      type: string
+                  required:
+                    - shipping_zone
+                    - type
+                    - location
+                    - name
+                    - id
             required:
               - vat
-              - shipping_options
+              - shipping_options (delivery)
               - supported_languages
               - min_order_value
               - currency
@@ -491,7 +516,10 @@ paths:
           schema:
             $ref: '#/definitions/error'
       operationId: get-info
-      description: Returns info data and print settings.
+      description: |-
+        Returns info data and print settings. 
+
+        Shipping options array can have two different types of objects, pickup and/or delivery. In the following table, that array is divided into two separate ones, so that object format can be described. Real response has only one array, shipping_options.
       parameters:
         - type: string
           in: header
